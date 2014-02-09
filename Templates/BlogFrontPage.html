@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <link type="text/css" rel="stylesheet" href="/styles/BlogCSS.css" />
+        <title>Blog</title>
+        <meta charset="windows-1252">
+        <meta name="viewport" content="width=device-width">
+    </head>
+    
+    <body>
+        <a href="/blog" class="main-title">
+            Cherry's On Top
+        </a>
+        {% if not user %}
+        <div class="login-area">
+            <a class ="login-link" href="/blog/login">Login</a>  | 
+            <a class ="login-link" href="/blog/signup">Signup</a>
+        </div>
+        {% else %}
+        <div class="login-area">
+            <a class ="login-link" href="/blog/logout">Logout</a>
+        </div>
+        <div class ="newpost-area">
+            <a class ="newpost-link" href="/blog/newpost">New Post</a>
+        </div>
+        {% endif%}
+        <div id="content">
+        {% for post in posts%}
+            <div class="post">
+                <div class="post-heading">
+                    <a href="/blog/{{post.key().id()}}" class ="post-title">
+                        {{post.subject}}
+                    </a>
+                    <div class="post-date">
+                        {{post.created.strftime("%b %d, %Y - %H:%M")}}
+                    </div>
+                </div>
+                <div class="post-content">
+                    {{post.content.replace('\n', '<br>') | safe}}
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+        <br>
+    </body>
+    
+    
+</html>

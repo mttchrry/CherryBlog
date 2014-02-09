@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    
+    <head>
+        <link type="text/css" rel="stylesheet" href="/styles/BlogCSS.css" />
+        <title>New Blog Post</title>
+        <meta charset="windows-1252">
+        <meta name="viewport" content="width=device-width">
+    </head>
+       
+    <body>
+        <form method="post">
+            <table>
+                <thead>
+                <h2>
+                    Enter a New Post
+                </h2>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="label">
+                            Title
+                        </td>
+                        <td>
+                            <input type="text" name="subject" value="{{title}}">
+                        </td>
+                        <td class="error">
+                            {{title_error}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">
+                            Blog Content
+                        </td>
+                        <td>
+                            <textarea name="content">{{content}}</textarea>
+                        </td>
+                    </tr>
+                    <tr class="error">
+                        <td class="label">
+                        </td>
+                        <td> 
+                            {{content_error}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <input type="submit">
+        </form>
+    </body>
+  
+</html>
