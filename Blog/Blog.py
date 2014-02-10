@@ -202,4 +202,5 @@ class PermalinkHandler(BaseHandler):
             self.error(404)
             return
         else:
-            self.render('BlogFrontPage.html', posts=singlePost)
+            userId = self.get_user()
+            self.render('BlogFrontPage.html', posts=singlePost, user=userId)
