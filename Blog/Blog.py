@@ -184,7 +184,7 @@ class Newpost(BaseHandler):
         content=self.request.get('content')
         
         if content and title:
-            time.sleep(.1)
+            time.sleep(.3)
             safe_title = escape_html(title)
             safe_content = escape_html(content)
             post = BlogPost(subject=safe_title, content=safe_content)
@@ -202,4 +202,5 @@ class PermalinkHandler(BaseHandler):
             self.error(404)
             return
         else:
-            self.render('BlogFrontPage.html', posts=singlePost)
+            userId = self.get_user()
+            self.render('BlogFrontPage.html', posts=singlePost, user=userId)
