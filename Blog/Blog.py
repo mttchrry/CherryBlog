@@ -238,3 +238,10 @@ class PermalinkHandler(BaseHandler):
             lastCachedTime = time.time()
             memcache.add("post:%s" %blog_id, singlePost)
             return singlePost;
+        
+class FlushCache(BaseHandler):
+    def get(self):
+        memcache.flush_all()
+        global lastCachedTime
+        lastCachedTime = time.time()
+        self.redirect("/blog")

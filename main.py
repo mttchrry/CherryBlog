@@ -36,6 +36,7 @@ from Blog.Blog import Login
 from Blog.Blog import Newpost
 from Blog.Blog import Login
 from Blog.Blog import Logout
+from Blog.Blog import FlushCache
 
 rot13Form = """
 <form method="post">
@@ -105,7 +106,8 @@ app = webapp2.WSGIApplication([
                                   ('/blog/login', Login),
                                   ('/blog/logout', Logout),
                                   ('/blog/?(.*).json', ApiProvider),
-                                  ('/blog/removeallposts', DeletePosts)
+                                  ('/blog/removeallposts', DeletePosts),
+                                  ('/blog/flush', FlushCache)                        
                               ], debug=True)
 
 
