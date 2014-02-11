@@ -12,6 +12,8 @@ import string
 import time
 import hashlib
 import webapp2
+import logging
+from google.appengine.api import memcache
 from google.appengine.api import users
 from google.appengine.ext import db
 from BaseRenderingModule.BaseHandler import BaseHandler
@@ -163,17 +165,37 @@ class BlogPost(db.Model):
     def render(self):
         self._render_text = self.content.replace('\n', '<br>')
  
+lastCachedTime = 0.0
+  
 class Blog(BaseHandler):
     def render_front(self):
         posts=db.GqlQuery("Select * FROM BlogPost ORDER BY created DESC LIMIT 10")
         user_id = self.get_user()
-        self.render('BlogFrontPage.html', posts=posts, user=user_id)
-    
+        self.render('BlogFrontPage.html', posts=posts, user=user_id, last_queried_time = time.time() - lastCachedTime )
+        #self.write("time.time = %s \n the other is %s" % (time.time(), lastCachedTime))
+        
     def get_json(self):
         return posts;
     
     def get(self):
         self.render_front()
+    
+    def getPosts(self):
+        global lastCachedTime
+        posts = memcache.get('top_posts')
+        if posts is not None:
+            return posts
+        else:
+            return query_for_posts();
+
+def query_for_posts():
+    global lastCachedTime
+    logging.error("querying the DB")
+    posts=db.GqlQuery("Select * FROM BlogPost ORDER BY created DESC LIMIT 10")
+    memcache.set('top_posts', posts)
+    lastCachedTime = time.time()
+    return posts
+    
             
 class Newpost(BaseHandler):
         
@@ -184,11 +206,12 @@ class Newpost(BaseHandler):
         content=self.request.get('content')
         
         if content and title:
-            time.sleep(.3)
             safe_title = escape_html(title)
             safe_content = escape_html(content)
             post = BlogPost(subject=safe_title, content=safe_content)
             post_key = post.put()
+            time.sleep(.3)
+            query_for_posts()
             self.redirect("/blog/%s" % post_key.id())
         else:
             error = "We need a title and content."
