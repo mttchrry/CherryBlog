@@ -165,7 +165,7 @@ class BlogPost(db.Model):
     def render(self):
         self._render_text = self.content.replace('\n', '<br>')
  
-lastCachedTime = 0.0
+lastCachedTime = time.time()
   
 class Blog(BaseHandler):
     def render_front(self):
@@ -219,11 +219,22 @@ class Newpost(BaseHandler):
             
 class PermalinkHandler(BaseHandler):
     def get(self, blog_id):
-        singlePost = db.GqlQuery("Select * FROM BlogPost WHERE __key__ = KEY('BlogPost', %s)" % int(blog_id))
+        singlePost = self.getpost(blog_id)
         #singlePost = BlogPost.get_by_id(int(blog_id))
         if not singlePost:
             self.error(404)
             return
         else:
-            userId = self.get_user()
-            self.render('BlogFrontPage.html', posts=singlePost, user=userId)
+            user_id = self.get_user()
+            self.render('BlogFrontPage.html', posts=singlePost, user=user_id, last_queried_time = time.time() - lastCachedTime)
+    
+    def getpost(self, blog_id):
+        global lastCachedTime
+        post = memcache.get("post:%s" % blog_id)
+        if post is not None:
+            return post
+        else:
+            singlePost = db.GqlQuery("Select * FROM BlogPost WHERE __key__ = KEY('BlogPost', %s)" % int(blog_id))
+            lastCachedTime = time.time()
+            memcache.add("post:%s" %blog_id, singlePost)
+            return singlePost;
