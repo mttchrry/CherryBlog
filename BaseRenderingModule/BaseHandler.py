@@ -7,6 +7,7 @@ import jinja2
 import os
 import urllib
 import hashlib
+import logging
 #from Blog.Blog import User
 from google.appengine.api import users
 from google.appengine.ext import db
@@ -45,8 +46,11 @@ class BaseHandler(webapp2.RequestHandler):
         if userCookie:
             user_id, hash_val = userCookie.split("|")
             users = db.GqlQuery("SELECT * FROM User WHERE __key__ = KEY('User', %s)" % int(user_id))
+            logging.info("my var is %s", str(users))
             if users:
-                if valid_pw(users[0].username, users[0].password, hash_val):
+                user = users.get()
+            if user:
+                if valid_pw(user.username, user.password, hash_val):
                     return user_id 
                 else: 
                     return none

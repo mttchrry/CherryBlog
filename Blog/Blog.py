@@ -145,10 +145,13 @@ class Welcome(BaseHandler):
             users = db.GqlQuery("SELECT * FROM User WHERE __key__ = KEY('User', %s)" % int(user_id))
             if users:
                 self.response.out.write("Welcome, you signed up correctly %s"% users[0].username)
+                time.sleep(3);
+                self.redirect("/blog")
             else: 
                 self.redirect("/blog/signup")
         else:
             self.redirect("/blog/signup") 
+
         
 ################################################
 # Blog Stuff
