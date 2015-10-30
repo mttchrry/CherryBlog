@@ -46,7 +46,6 @@ class BaseHandler(webapp2.RequestHandler):
         if userCookie:
             user_id, hash_val = userCookie.split("|")
             users = db.GqlQuery("SELECT * FROM User WHERE __key__ = KEY('User', %s)" % int(user_id))
-            logging.info("my var is %s", str(users))
             if users:
                 user = users.get()
             if user:

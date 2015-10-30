@@ -8,7 +8,7 @@ and open the template in the editor.
     
     <head>
         <link type="text/css" rel="stylesheet" href="/styles/BlogCSS.css" />
-        <title>New Blog Post</title>
+        <title>Edit Blog Post</title>
         <meta charset="windows-1252">
         <meta name="viewport" content="width=device-width">
     </head>
@@ -18,7 +18,7 @@ and open the template in the editor.
             <table>
                 <thead>
                 <h2>
-                    Enter a New Post
+                    Edit your post New Post
                 </h2>
                 </thead>
                 <tbody>
@@ -26,11 +26,8 @@ and open the template in the editor.
                         <td class="label">
                             Title
                         </td>
-                        <td>
-                            <input type="text" name="subject" value="{{title}}">
-                        </td>
-                        <td class="error">
-                            {{title_error}}
+                        <td name="subject">
+                            {{posts.get().subject}}
                         </td>
                     </tr>
                     <tr>
@@ -38,7 +35,7 @@ and open the template in the editor.
                             Blog Content
                         </td>
                         <td>
-                            <textarea name="content">{{content}}</textarea>
+                            <textarea name="content">{{posts.get().content}}</textarea>
                         </td>
                     </tr>
                     <tr class="error">

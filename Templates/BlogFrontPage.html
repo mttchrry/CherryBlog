@@ -26,7 +26,13 @@ and open the template in the editor.
             <a class ="login-link" href="/blog/logout">Logout</a>
         </div>
         <div class ="newpost-area">
+        {% if single_post and posts.get().user == user %}
+            <a class="edit-link" href="/blog/edit/{{posts.get().key().id()}}">
+                Edit Post
+            </a>
+        {% else %}
             <a class ="newpost-link" href="/blog/newpost">New Post</a>
+        {% endif %}
         </div>
         {% endif%}
         <div id="content">
@@ -51,6 +57,4 @@ and open the template in the editor.
             Queried {{last_queried_time}} seconds ago.
         </div>
     </body>
-    
-    
 </html>

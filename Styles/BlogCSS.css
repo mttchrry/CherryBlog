@@ -47,6 +47,11 @@ body {
     text-decoration: underline;
 }
 
+.edit-link {
+    text-align: left;
+    margin-top: 10px;
+}
+
 h2 {
     font-size: 24px;
     font-weight: bold;

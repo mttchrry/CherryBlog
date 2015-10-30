@@ -37,6 +37,7 @@ from Blog.Blog import Newpost
 from Blog.Blog import Login
 from Blog.Blog import Logout
 from Blog.Blog import FlushCache
+from Blog.Blog import EditPost
 
 rot13Form = """
 <form method="post">
@@ -101,6 +102,7 @@ app = webapp2.WSGIApplication([
                                   ('/blog/signup', SignUpPage),
                                   ('/blog/welcome', Welcome),
                                   ('/blog/?', Blog),
+                                  ('/blog/edit/([0-9]+)', EditPost),
                                   ('/blog/newpost', Newpost),
                                   ('/blog/([0-9]+)', PermalinkHandler),
                                   ('/blog/login', Login),

@@ -207,11 +207,11 @@ class Newpost(BaseHandler):
     def post(self):
         title=self.request.get('subject')
         content=self.request.get('content')
-        
+        this_user = self.get_user()
         if content and title:
             safe_title = escape_html(title)
             safe_content = escape_html(content)
-            post = BlogPost(subject=safe_title, content=safe_content)
+            post = BlogPost(subject=safe_title, content=safe_content, user=this_user)
             post_key = post.put()
             time.sleep(.3)
             query_for_posts()
@@ -219,17 +219,17 @@ class Newpost(BaseHandler):
         else:
             error = "We need a title and content."
             self.render('Newpost.html', title=title, content=content, content_error=error)
-            
+
 class PermalinkHandler(BaseHandler):
     def get(self, blog_id):
         singlePost = self.getpost(blog_id)
-        #singlePost = BlogPost.get_by_id(int(blog_id))
         if not singlePost:
             self.error(404)
             return
         else:
             user_id = self.get_user()
-            self.render('BlogFrontPage.html', posts=singlePost, user=user_id, last_queried_time = time.time() - lastCachedTime)
+            logging.error(singlePost)
+            self.render('BlogFrontPage.html', posts=singlePost, user=user_id, last_queried_time = time.time() - lastCachedTime, single_post=True)
     
     def getpost(self, blog_id):
         global lastCachedTime
@@ -241,7 +241,43 @@ class PermalinkHandler(BaseHandler):
             lastCachedTime = time.time()
             memcache.add("post:%s" %blog_id, singlePost)
             return singlePost;
-        
+
+class EditPost(PermalinkHandler):
+
+    def get(self, blog_id):
+        singlePost = self.getpost(blog_id)
+        logging.info("Made it here!")
+        #singlePost = BlogPost.get_by_id(int(blog_id))
+        if not singlePost:
+            self.error(404)
+            return
+        else:
+            user_id = self.get_user()
+            self.render('EditPost.html', posts=singlePost, user=user_id, last_queried_time = time.time() - lastCachedTime)
+   
+
+    def post(self, blog_id):
+        blogPost = self.getpost(blog_id).get()
+        content = self.request.get('content')
+        safe_content = escape_html(content)
+        logging.error("content is %s", content)
+        logging.error("BlogPost is %s", blogPost)
+        title = self.request.get('subject')
+        if blogPost == None and title:
+            safe_title = escape_html(title)
+            blogPost = BlogPost(subject=safe_title, content=safe_content, user=self.get_user())
+            blogPost.put()
+        if content:
+            blogPost.content = safe_content #post = BlogPost(subject=safe_title, content=safe_content, user=this_user)
+            logging.error("BlogPost content is %s", blogPost.content)
+            post_key = blogPost.put()
+
+            time.sleep(.3)
+            self.redirect("/blog/%s" % post_key.id())
+        else:
+            error = "We need content."
+            self.render('Edit.html', post=singlePost, content=content, content_error=error)  
+
 class FlushCache(BaseHandler):
     def get(self):
         memcache.flush_all()
